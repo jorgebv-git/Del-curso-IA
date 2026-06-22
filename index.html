@@ -3,418 +3,412 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ahorcado - Sexualidad Humana</title>
+<title>Examen: Emociones, Sentimientos y Afecto</title>
 
 <style>
 body{
+    font-family: Arial, sans-serif;
+    background:#f4f6f9;
     margin:0;
-    font-family:'Trebuchet MS',sans-serif;
-    background:linear-gradient(135deg,#6a11cb,#2575fc);
-    color:white;
-    text-align:center;
+    padding:20px;
+}
+
+.container{
+    max-width:1000px;
+    margin:auto;
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 0 15px rgba(0,0,0,.15);
 }
 
 h1{
-    margin-top:20px;
-    font-size:40px;
-    text-shadow:2px 2px 5px black;
+    text-align:center;
+    color:#2c3e50;
 }
 
-.contenedor{
-    width:90%;
-    max-width:1000px;
-    margin:auto;
-    padding:20px;
-}
-
-.info{
-    display:flex;
-    justify-content:space-around;
-    flex-wrap:wrap;
-    margin:15px;
-    font-size:22px;
-    font-weight:bold;
-}
-
-.pista{
-    background:white;
-    color:#333;
+.pregunta{
+    margin:20px 0;
     padding:15px;
-    border-radius:15px;
-    margin:15px auto;
-    max-width:800px;
-    font-size:22px;
-    font-weight:bold;
+    border-left:5px solid #3498db;
+    background:#f9fbff;
+    border-radius:8px;
 }
 
-.palabra{
-    letter-spacing:10px;
-    font-size:40px;
-    margin:25px;
-    font-weight:bold;
+.feedback{
+    margin-top:8px;
+    padding:10px;
+    border-radius:5px;
+    display:none;
 }
 
-.letras{
-    display:flex;
-    flex-wrap:wrap;
-    justify-content:center;
-    gap:10px;
+.correcto{
+    background:#d4edda;
+    color:#155724;
+}
+
+.incorrecto{
+    background:#f8d7da;
+    color:#721c24;
+}
+
+textarea{
+    width:100%;
+    min-height:100px;
+    margin-top:10px;
 }
 
 button{
-    width:50px;
-    height:50px;
+    display:block;
+    margin:30px auto;
+    padding:15px 30px;
+    font-size:18px;
+    background:#27ae60;
+    color:white;
     border:none;
     border-radius:10px;
-    font-size:20px;
-    font-weight:bold;
     cursor:pointer;
-    background:#ffd700;
-    color:black;
 }
 
 button:hover{
-    background:#ff9800;
+    background:#219150;
 }
 
-button:disabled{
-    background:gray;
-    color:white;
-}
-
-canvas{
-    background:white;
-    border-radius:15px;
-    margin:20px;
-}
-
-#mensajeFinal{
-    font-size:28px;
+#resultado{
+    text-align:center;
+    font-size:24px;
     font-weight:bold;
     margin-top:20px;
 }
 
-.final{
-    background:white;
-    color:#333;
-    padding:20px;
-    border-radius:15px;
-    margin-top:20px;
+.progress{
+    width:100%;
+    background:#ddd;
+    border-radius:20px;
+    margin-bottom:20px;
+}
+
+.progress-bar{
+    height:20px;
+    width:0%;
+    background:#3498db;
+    border-radius:20px;
 }
 </style>
 </head>
+
 <body>
 
-<div class="contenedor">
+<div class="container">
 
-<h1>🎓 Ahorcado: Sexualidad Humana</h1>
+<h1>Examen: Emociones, Sentimientos y Afecto</h1>
 
-<div class="info">
-<div>Puntos: <span id="puntos">0</span></div>
-<div>Errores: <span id="errores">0</span></div>
-<div>Palabra: <span id="numeroPalabra">1</span>/10</div>
+<label><b>Nombre del estudiante:</b></label>
+<input type="text" id="nombre" style="width:100%;padding:10px;margin-bottom:20px;">
+
+<div class="progress">
+<div class="progress-bar" id="barra"></div>
 </div>
 
-<canvas id="canvas" width="250" height="300"></canvas>
+<div id="quiz"></div>
 
-<div class="pista" id="pista"></div>
+<h2>Preguntas Abiertas</h2>
 
-<div class="palabra" id="palabra"></div>
+<div class="pregunta">
+<p>21. Describe una situación en la que hayas regulado adecuadamente una emoción intensa.</p>
+<textarea></textarea>
+</div>
 
-<div class="letras" id="letras"></div>
+<div class="pregunta">
+<p>22. ¿Por qué consideras importante la empatía en las relaciones humanas?</p>
+<textarea></textarea>
+</div>
 
-<div id="mensajeFinal"></div>
+<div class="pregunta">
+<p>23. Explica con tus palabras la diferencia entre emoción y sentimiento.</p>
+<textarea></textarea>
+</div>
+
+<div class="pregunta">
+<p>24. ¿Cómo influyen las emociones en la toma de decisiones?</p>
+<textarea></textarea>
+</div>
+
+<div class="pregunta">
+<p>25. Menciona tres estrategias saludables para manejar el estrés y explica por qué funcionan.</p>
+<textarea></textarea>
+</div>
+
+<button onclick="calificar()">Finalizar Examen</button>
+
+<div id="resultado"></div>
 
 </div>
 
 <script>
 
-const palabras = [
-
+const preguntas = [
 {
-palabra:"FETICHISMO",
-pista:"Atracción o interés particular hacia objetos o características específicas."
+texto:"1. ¿Qué son las emociones?",
+opciones:[
+"Pensamientos racionales permanentes",
+"Respuestas automáticas del organismo ante estímulos internos o externos",
+"Decisiones conscientes",
+"Valores aprendidos socialmente"],
+correcta:1,
+retro:"Las emociones son respuestas automáticas del organismo ante estímulos internos o externos."
 },
-
 {
-palabra:"EXHIBICIONISMO",
-pista:"Conducta relacionada con mostrar el cuerpo para llamar la atención."
+texto:"2. ¿Cuál es la principal diferencia entre emoción y sentimiento?",
+opciones:[
+"No existe diferencia",
+"La emoción es más duradera que el sentimiento",
+"La emoción es una reacción inmediata y el sentimiento es más duradero y consciente",
+"El sentimiento es automático y la emoción es racional"],
+correcta:2,
+retro:"La emoción es inmediata; el sentimiento implica una elaboración consciente y suele durar más."
 },
-
 {
-palabra:"VOYEURISMO",
-pista:"Interés por observar a otras personas sin participar directamente."
+texto:"3. ¿Cuál de las siguientes es una emoción básica?",
+opciones:["Culpa","Vergüenza","Alegría","Orgullo"],
+correcta:2,
+retro:"La alegría es considerada una emoción básica."
 },
-
 {
-palabra:"IDENTIDAD",
-pista:"Forma en que una persona se reconoce y comprende a sí misma."
+texto:"4. ¿Cuál de las siguientes opciones corresponde a un sentimiento?",
+opciones:[
+"Miedo ante un ruido fuerte",
+"Amor hacia un familiar",
+"Sorpresa por una explosión",
+"Asco al probar algo desagradable"],
+correcta:1,
+retro:"El amor suele considerarse un sentimiento porque es más estable y duradero."
 },
-
 {
-palabra:"GENERO",
-pista:"Construcción social relacionada con roles y expectativas."
+texto:"5. El afecto se refiere a:",
+opciones:[
+"La capacidad de resolver problemas",
+"El conjunto de emociones, sentimientos y estados de ánimo que influyen en la conducta",
+"Un tipo de emoción negativa",
+"Una reacción exclusivamente biológica"],
+correcta:1,
+retro:"El afecto engloba emociones, sentimientos y estados de ánimo."
 },
-
 {
-palabra:"ORIENTACION",
-pista:"Describe hacia quién se dirige la atracción afectiva o romántica."
+texto:"6. ¿Cuál es una función importante de las emociones?",
+opciones:[
+"Confundir la toma de decisiones",
+"Adaptarnos al entorno",
+"Eliminar los pensamientos",
+"Evitar toda interacción social"],
+correcta:1,
+retro:"Las emociones ayudan a la adaptación y supervivencia."
 },
-
 {
-palabra:"AFECTIVIDAD",
-pista:"Capacidad de expresar emociones y sentimientos."
+texto:"7. Cuando una persona experimenta tristeza durante varios días debido a una pérdida, se habla principalmente de:",
+opciones:[
+"Emoción momentánea",
+"Reflejo automático",
+"Sentimiento",
+"Impulso biológico"],
+correcta:2,
+retro:"Los sentimientos suelen durar más tiempo que las emociones."
 },
-
 {
-palabra:"CONSENTIMIENTO",
-pista:"Acuerdo libre e informado entre las personas."
+texto:"8. ¿Qué componente NO forma parte de la emoción?",
+opciones:[
+"Fisiológico",
+"Conductual",
+"Cognitivo",
+"Lógico-matemático"],
+correcta:3,
+retro:"Los componentes emocionales son fisiológico, cognitivo y conductual."
 },
-
 {
-palabra:"EXPRESION",
-pista:"Forma en que una persona manifiesta quién es."
+texto:"9. La empatía es:",
+opciones:[
+"La capacidad de ignorar emociones ajenas",
+"La habilidad de comprender y compartir los sentimientos de otra persona",
+"Un tipo de emoción básica",
+"Una reacción puramente física"],
+correcta:1,
+retro:"La empatía implica comprender los sentimientos de otras personas."
 },
-
 {
-palabra:"SEXUALIDAD",
-pista:"Dimensión humana que integra aspectos biológicos, emocionales y sociales."
+texto:"10. La regulación emocional implica:",
+opciones:[
+"Reprimir todas las emociones",
+"Expresar siempre lo que se siente sin control",
+"Reconocer y manejar adecuadamente las emociones",
+"Evitar cualquier emoción negativa"],
+correcta:2,
+retro:"Regular emociones significa reconocerlas y gestionarlas adecuadamente."
+},
+{
+texto:"11. ¿Cuál de las siguientes emociones suele activarse ante una amenaza?",
+opciones:["Alegría","Miedo","Orgullo","Gratitud"],
+correcta:1,
+retro:"El miedo prepara al organismo para responder al peligro."
+},
+{
+texto:"12. ¿Qué característica distingue a los sentimientos?",
+opciones:[
+"Son siempre involuntarios",
+"Son breves y automáticos",
+"Son experiencias más duraderas y conscientes",
+"No tienen relación con las emociones"],
+correcta:2,
+retro:"Los sentimientos suelen ser más duraderos y conscientes."
+},
+{
+texto:"13. Según Daniel Goleman, la inteligencia emocional implica principalmente:",
+opciones:[
+"Tener alto coeficiente intelectual",
+"Controlar a los demás",
+"Reconocer y manejar las propias emociones y las de otros",
+"Evitar expresar emociones"],
+correcta:2,
+retro:"La inteligencia emocional implica reconocer y gestionar emociones."
+},
+{
+texto:"14. ¿Cuál es un ejemplo de afecto positivo?",
+opciones:["Odio","Envidia","Cariño","Ira"],
+correcta:2,
+retro:"El cariño es una manifestación de afecto positivo."
+},
+{
+texto:"15. Las emociones cumplen una función social porque:",
+opciones:[
+"Permiten comunicar estados internos a otras personas",
+"Eliminan conflictos automáticamente",
+"Sustituyen el lenguaje",
+"Impiden la convivencia"],
+correcta:0,
+retro:"Las emociones ayudan a comunicar cómo nos sentimos."
+},
+{
+texto:"16. ¿Qué sucede en el cuerpo cuando sentimos una emoción intensa?",
+opciones:[
+"No ocurre ningún cambio",
+"Solo cambia el pensamiento",
+"Se producen cambios fisiológicos como aumento del ritmo cardíaco",
+"Se pierde la memoria"],
+correcta:2,
+retro:"Las emociones generan cambios fisiológicos observables."
+},
+{
+texto:"17. ¿Cuál de las siguientes es una emoción secundaria?",
+opciones:["Tristeza","Ira","Celos","Sorpresa"],
+correcta:2,
+retro:"Los celos son considerados una emoción secundaria o compleja."
+},
+{
+texto:"18. El afecto influye en:",
+opciones:[
+"La forma en que interpretamos las situaciones",
+"Únicamente en la salud física",
+"Solo en la infancia",
+"Ninguna conducta humana"],
+correcta:0,
+retro:"El afecto influye en pensamientos, conductas e interpretación de experiencias."
+},
+{
+texto:"19. La capacidad de ponerse en el lugar del otro se llama:",
+opciones:[
+"Simpatía automática",
+"Empatía",
+"Impulsividad",
+"Euforia"],
+correcta:1,
+retro:"La empatía permite comprender perspectivas y emociones ajenas."
+},
+{
+texto:"20. Una persona que reconoce que está enojada y decide respirar profundo antes de responder está practicando:",
+opciones:[
+"Represión emocional",
+"Regulación emocional",
+"Negación",
+"Indiferencia"],
+correcta:1,
+retro:"Respirar y reflexionar antes de actuar es una estrategia de regulación emocional."
 }
-
 ];
 
-let indice = 0;
-let palabraActual = palabras[indice].palabra;
-let mostrada = [];
-let errores = 0;
-let puntos = 0;
-let letrasIncorrectas = 0;
+const quiz = document.getElementById("quiz");
 
-const palabraDiv = document.getElementById("palabra");
-const pistaDiv = document.getElementById("pista");
-const letrasDiv = document.getElementById("letras");
+preguntas.forEach((p,i)=>{
+let div=document.createElement("div");
+div.className="pregunta";
 
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
+let html=`<p><b>${p.texto}</b></p>`;
 
-function iniciarPalabra(){
-
-mostrada=[];
-
-for(let letra of palabraActual){
-mostrada.push("_");
-}
-
-actualizarVista();
-
-}
-
-function actualizarVista(){
-
-palabraDiv.textContent = mostrada.join(" ");
-
-pistaDiv.textContent = "💡 Pista: " + palabras[indice].pista;
-
-document.getElementById("puntos").textContent=puntos;
-document.getElementById("errores").textContent=letrasIncorrectas;
-document.getElementById("numeroPalabra").textContent=indice+1;
-
-}
-
-function crearBotones(){
-
-const abc="ABCDEFGHIJKLMNÑOPQRSTUVWXYZ";
-
-for(let letra of abc){
-
-let btn=document.createElement("button");
-btn.textContent=letra;
-
-btn.onclick=()=>seleccionarLetra(letra,btn);
-
-letrasDiv.appendChild(btn);
-
-}
-
-}
-
-function seleccionarLetra(letra,btn){
-
-btn.disabled=true;
-
-if(palabraActual.includes(letra)){
-
-for(let i=0;i<palabraActual.length;i++){
-
-if(palabraActual[i]===letra){
-mostrada[i]=letra;
-}
-
-}
-
-actualizarVista();
-
-if(!mostrada.includes("_")){
-
-puntos+=3;
-
-indice++;
-
-if(indice===palabras.length){
-finalizarJuego();
-return;
-}
-
-palabraActual=palabras[indice].palabra;
-errores=0;
-limpiarCanvas();
-dibujarBase();
-reiniciarBotones();
-iniciarPalabra();
-
-}
-
-}else{
-
-errores++;
-letrasIncorrectas++;
-
-dibujarParte(errores);
-
-document.getElementById("errores").textContent=letrasIncorrectas;
-
-if(errores>=6){
-
-indice++;
-
-if(indice===palabras.length){
-finalizarJuego();
-return;
-}
-
-palabraActual=palabras[indice].palabra;
-errores=0;
-limpiarCanvas();
-dibujarBase();
-reiniciarBotones();
-iniciarPalabra();
-
-}
-
-}
-
-}
-
-function reiniciarBotones(){
-
-const botones=document.querySelectorAll("button");
-
-botones.forEach(b=>{
-b.disabled=false;
+p.opciones.forEach((op,j)=>{
+html+=`
+<label>
+<input type="radio" name="p${i}" value="${j}" onchange="actualizarBarra()">
+${op}
+</label><br>`;
 });
 
+html+=`
+<div id="f${i}" class="feedback"></div>`;
+
+div.innerHTML=html;
+quiz.appendChild(div);
+});
+
+function actualizarBarra(){
+let contestadas=0;
+
+preguntas.forEach((p,i)=>{
+if(document.querySelector(`input[name="p${i}"]:checked`)){
+contestadas++;
+}
+});
+
+let porcentaje=(contestadas/preguntas.length)*100;
+document.getElementById("barra").style.width=porcentaje+"%";
 }
 
-function finalizarJuego(){
+function calificar(){
 
-document.getElementById("mensajeFinal").innerHTML=
+let puntos=0;
+
+preguntas.forEach((p,i)=>{
+
+let seleccion=document.querySelector(`input[name="p${i}"]:checked`);
+let feedback=document.getElementById(`f${i}`);
+
+if(seleccion){
+
+if(parseInt(seleccion.value)===p.correcta){
+puntos++;
+feedback.style.display="block";
+feedback.className="feedback correcto";
+feedback.innerHTML="✔ Correcto";
+}
+else{
+feedback.style.display="block";
+feedback.className="feedback incorrecto";
+feedback.innerHTML="✘ Incorrecto. " + p.retro;
+}
+}
+else{
+feedback.style.display="block";
+feedback.className="feedback incorrecto";
+feedback.innerHTML="Pregunta sin responder.";
+}
+});
+
+let porcentaje=((puntos/preguntas.length)*100).toFixed(1);
+
+document.getElementById("resultado").innerHTML=
 `
-<div class='final'>
-🏆 JUEGO FINALIZADO<br><br>
-Puntaje obtenido: <b>${puntos}</b><br>
-Letras incorrectas: <b>${letrasIncorrectas}</b><br><br>
-Gracias por participar.
-</div>
+Calificación: ${puntos}/20<br>
+Porcentaje: ${porcentaje}%<br>
+${porcentaje>=70 ? "✅ APROBADO" : "❌ NECESITA REFORZAR LOS APRENDIZAJES"}
 `;
-
-letrasDiv.innerHTML="";
-palabraDiv.innerHTML="";
-pistaDiv.innerHTML="Actividad concluida.";
 }
-
-function limpiarCanvas(){
-ctx.clearRect(0,0,canvas.width,canvas.height);
-}
-
-function dibujarBase(){
-
-ctx.lineWidth=4;
-
-ctx.beginPath();
-ctx.moveTo(30,280);
-ctx.lineTo(180,280);
-ctx.stroke();
-
-ctx.beginPath();
-ctx.moveTo(60,280);
-ctx.lineTo(60,30);
-ctx.stroke();
-
-ctx.beginPath();
-ctx.lineTo(180,30);
-ctx.moveTo(60,30);
-ctx.lineTo(180,30);
-ctx.stroke();
-
-ctx.beginPath();
-ctx.moveTo(180,30);
-ctx.lineTo(180,60);
-ctx.stroke();
-
-}
-
-function dibujarParte(n){
-
-switch(n){
-
-case 1:
-ctx.beginPath();
-ctx.arc(180,85,25,0,Math.PI*2);
-ctx.stroke();
-break;
-
-case 2:
-ctx.beginPath();
-ctx.moveTo(180,110);
-ctx.lineTo(180,180);
-ctx.stroke();
-break;
-
-case 3:
-ctx.beginPath();
-ctx.moveTo(180,130);
-ctx.lineTo(150,160);
-ctx.stroke();
-break;
-
-case 4:
-ctx.beginPath();
-ctx.moveTo(180,130);
-ctx.lineTo(210,160);
-ctx.stroke();
-break;
-
-case 5:
-ctx.beginPath();
-ctx.moveTo(180,180);
-ctx.lineTo(150,220);
-ctx.stroke();
-break;
-
-case 6:
-ctx.beginPath();
-ctx.moveTo(180,180);
-ctx.lineTo(210,220);
-ctx.stroke();
-break;
-
-}
-
-}
-
-crearBotones();
-dibujarBase();
-iniciarPalabra();
 
 </script>
 
