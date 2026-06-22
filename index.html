@@ -1,0 +1,422 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ahorcado - Sexualidad Humana</title>
+
+<style>
+body{
+    margin:0;
+    font-family:'Trebuchet MS',sans-serif;
+    background:linear-gradient(135deg,#6a11cb,#2575fc);
+    color:white;
+    text-align:center;
+}
+
+h1{
+    margin-top:20px;
+    font-size:40px;
+    text-shadow:2px 2px 5px black;
+}
+
+.contenedor{
+    width:90%;
+    max-width:1000px;
+    margin:auto;
+    padding:20px;
+}
+
+.info{
+    display:flex;
+    justify-content:space-around;
+    flex-wrap:wrap;
+    margin:15px;
+    font-size:22px;
+    font-weight:bold;
+}
+
+.pista{
+    background:white;
+    color:#333;
+    padding:15px;
+    border-radius:15px;
+    margin:15px auto;
+    max-width:800px;
+    font-size:22px;
+    font-weight:bold;
+}
+
+.palabra{
+    letter-spacing:10px;
+    font-size:40px;
+    margin:25px;
+    font-weight:bold;
+}
+
+.letras{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:10px;
+}
+
+button{
+    width:50px;
+    height:50px;
+    border:none;
+    border-radius:10px;
+    font-size:20px;
+    font-weight:bold;
+    cursor:pointer;
+    background:#ffd700;
+    color:black;
+}
+
+button:hover{
+    background:#ff9800;
+}
+
+button:disabled{
+    background:gray;
+    color:white;
+}
+
+canvas{
+    background:white;
+    border-radius:15px;
+    margin:20px;
+}
+
+#mensajeFinal{
+    font-size:28px;
+    font-weight:bold;
+    margin-top:20px;
+}
+
+.final{
+    background:white;
+    color:#333;
+    padding:20px;
+    border-radius:15px;
+    margin-top:20px;
+}
+</style>
+</head>
+<body>
+
+<div class="contenedor">
+
+<h1>🎓 Ahorcado: Sexualidad Humana</h1>
+
+<div class="info">
+<div>Puntos: <span id="puntos">0</span></div>
+<div>Errores: <span id="errores">0</span></div>
+<div>Palabra: <span id="numeroPalabra">1</span>/10</div>
+</div>
+
+<canvas id="canvas" width="250" height="300"></canvas>
+
+<div class="pista" id="pista"></div>
+
+<div class="palabra" id="palabra"></div>
+
+<div class="letras" id="letras"></div>
+
+<div id="mensajeFinal"></div>
+
+</div>
+
+<script>
+
+const palabras = [
+
+{
+palabra:"FETICHISMO",
+pista:"Atracción o interés particular hacia objetos o características específicas."
+},
+
+{
+palabra:"EXHIBICIONISMO",
+pista:"Conducta relacionada con mostrar el cuerpo para llamar la atención."
+},
+
+{
+palabra:"VOYEURISMO",
+pista:"Interés por observar a otras personas sin participar directamente."
+},
+
+{
+palabra:"IDENTIDAD",
+pista:"Forma en que una persona se reconoce y comprende a sí misma."
+},
+
+{
+palabra:"GENERO",
+pista:"Construcción social relacionada con roles y expectativas."
+},
+
+{
+palabra:"ORIENTACION",
+pista:"Describe hacia quién se dirige la atracción afectiva o romántica."
+},
+
+{
+palabra:"AFECTIVIDAD",
+pista:"Capacidad de expresar emociones y sentimientos."
+},
+
+{
+palabra:"CONSENTIMIENTO",
+pista:"Acuerdo libre e informado entre las personas."
+},
+
+{
+palabra:"EXPRESION",
+pista:"Forma en que una persona manifiesta quién es."
+},
+
+{
+palabra:"SEXUALIDAD",
+pista:"Dimensión humana que integra aspectos biológicos, emocionales y sociales."
+}
+
+];
+
+let indice = 0;
+let palabraActual = palabras[indice].palabra;
+let mostrada = [];
+let errores = 0;
+let puntos = 0;
+let letrasIncorrectas = 0;
+
+const palabraDiv = document.getElementById("palabra");
+const pistaDiv = document.getElementById("pista");
+const letrasDiv = document.getElementById("letras");
+
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+function iniciarPalabra(){
+
+mostrada=[];
+
+for(let letra of palabraActual){
+mostrada.push("_");
+}
+
+actualizarVista();
+
+}
+
+function actualizarVista(){
+
+palabraDiv.textContent = mostrada.join(" ");
+
+pistaDiv.textContent = "💡 Pista: " + palabras[indice].pista;
+
+document.getElementById("puntos").textContent=puntos;
+document.getElementById("errores").textContent=letrasIncorrectas;
+document.getElementById("numeroPalabra").textContent=indice+1;
+
+}
+
+function crearBotones(){
+
+const abc="ABCDEFGHIJKLMNÑOPQRSTUVWXYZ";
+
+for(let letra of abc){
+
+let btn=document.createElement("button");
+btn.textContent=letra;
+
+btn.onclick=()=>seleccionarLetra(letra,btn);
+
+letrasDiv.appendChild(btn);
+
+}
+
+}
+
+function seleccionarLetra(letra,btn){
+
+btn.disabled=true;
+
+if(palabraActual.includes(letra)){
+
+for(let i=0;i<palabraActual.length;i++){
+
+if(palabraActual[i]===letra){
+mostrada[i]=letra;
+}
+
+}
+
+actualizarVista();
+
+if(!mostrada.includes("_")){
+
+puntos+=3;
+
+indice++;
+
+if(indice===palabras.length){
+finalizarJuego();
+return;
+}
+
+palabraActual=palabras[indice].palabra;
+errores=0;
+limpiarCanvas();
+dibujarBase();
+reiniciarBotones();
+iniciarPalabra();
+
+}
+
+}else{
+
+errores++;
+letrasIncorrectas++;
+
+dibujarParte(errores);
+
+document.getElementById("errores").textContent=letrasIncorrectas;
+
+if(errores>=6){
+
+indice++;
+
+if(indice===palabras.length){
+finalizarJuego();
+return;
+}
+
+palabraActual=palabras[indice].palabra;
+errores=0;
+limpiarCanvas();
+dibujarBase();
+reiniciarBotones();
+iniciarPalabra();
+
+}
+
+}
+
+}
+
+function reiniciarBotones(){
+
+const botones=document.querySelectorAll("button");
+
+botones.forEach(b=>{
+b.disabled=false;
+});
+
+}
+
+function finalizarJuego(){
+
+document.getElementById("mensajeFinal").innerHTML=
+`
+<div class='final'>
+🏆 JUEGO FINALIZADO<br><br>
+Puntaje obtenido: <b>${puntos}</b><br>
+Letras incorrectas: <b>${letrasIncorrectas}</b><br><br>
+Gracias por participar.
+</div>
+`;
+
+letrasDiv.innerHTML="";
+palabraDiv.innerHTML="";
+pistaDiv.innerHTML="Actividad concluida.";
+}
+
+function limpiarCanvas(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
+}
+
+function dibujarBase(){
+
+ctx.lineWidth=4;
+
+ctx.beginPath();
+ctx.moveTo(30,280);
+ctx.lineTo(180,280);
+ctx.stroke();
+
+ctx.beginPath();
+ctx.moveTo(60,280);
+ctx.lineTo(60,30);
+ctx.stroke();
+
+ctx.beginPath();
+ctx.lineTo(180,30);
+ctx.moveTo(60,30);
+ctx.lineTo(180,30);
+ctx.stroke();
+
+ctx.beginPath();
+ctx.moveTo(180,30);
+ctx.lineTo(180,60);
+ctx.stroke();
+
+}
+
+function dibujarParte(n){
+
+switch(n){
+
+case 1:
+ctx.beginPath();
+ctx.arc(180,85,25,0,Math.PI*2);
+ctx.stroke();
+break;
+
+case 2:
+ctx.beginPath();
+ctx.moveTo(180,110);
+ctx.lineTo(180,180);
+ctx.stroke();
+break;
+
+case 3:
+ctx.beginPath();
+ctx.moveTo(180,130);
+ctx.lineTo(150,160);
+ctx.stroke();
+break;
+
+case 4:
+ctx.beginPath();
+ctx.moveTo(180,130);
+ctx.lineTo(210,160);
+ctx.stroke();
+break;
+
+case 5:
+ctx.beginPath();
+ctx.moveTo(180,180);
+ctx.lineTo(150,220);
+ctx.stroke();
+break;
+
+case 6:
+ctx.beginPath();
+ctx.moveTo(180,180);
+ctx.lineTo(210,220);
+ctx.stroke();
+break;
+
+}
+
+}
+
+crearBotones();
+dibujarBase();
+iniciarPalabra();
+
+</script>
+
+</body>
+</html>
